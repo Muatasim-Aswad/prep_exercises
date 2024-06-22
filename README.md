@@ -1,5 +1,5 @@
 
-#Animals
+# Animals
 
 * [Sloth](./sloth.md)
 * [Lesula](./lesula.md)
