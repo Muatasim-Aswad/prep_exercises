@@ -1,4 +1,4 @@
-import eurosFormatter from './euroFormatter.js';
+import { message } from './utils/messages.js';
 
 class Wallet {
   #name;
@@ -19,7 +19,7 @@ class Wallet {
 
   withdraw(amount) {
     if (this.#cash - amount < 0) {
-      console.log(`Insufficient funds!`);
+      message.withdrawFailureInsufficient(amount, this.#cash);
       return 0;
     }
 
@@ -28,19 +28,15 @@ class Wallet {
   }
 
   transferInto(wallet, amount) {
-    console.log(
-      `Transferring ${eurosFormatter.format(amount)} from ${this.name} to ${
-        wallet.name
-      }`
-    );
     const withdrawnAmount = this.withdraw(amount);
-    wallet.deposit(withdrawnAmount);
+    if (withdrawnAmount) {
+      message.transfer(amount, this.#name, wallet.name);
+      wallet.deposit(withdrawnAmount);
+    }
   }
 
   reportBalance() {
-    console.log(
-      `Name: ${this.name}, balance: ${eurosFormatter.format(this.#cash)}`
-    );
+    message.reportBalance(this.#name, this.#cash);
   }
 }
 

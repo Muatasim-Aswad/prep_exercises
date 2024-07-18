@@ -1,4 +1,4 @@
-import eurosFormatter from './euroFormatter.js';
+import { message } from './utils/messages.js';
 
 /**
  * This is the closure way of doing things and we have already completed it for you so you don't need to do anything.
@@ -15,21 +15,13 @@ function createWallet(name, cash = 0) {
 
   function withdraw(amount) {
     if (cash - amount < 0) {
-      console.log(
-        `FAILED to withdraw ${eurosFormatter.format(
-          amount,
-        )}. You only HAVE ${eurosFormatter.format(cash)}.`,
-      );
+      message.withdrawFailureInsufficient(amount, cash);
       return 0;
     }
 
-    const nowAllowance = dailyAllowance - dayTotalWithdrawals;
-    if (amount > nowAllowance) {
-      console.log(
-        `FAILED to withdraw ${eurosFormatter.format(
-          amount,
-        )}. Your DAILY LIMIT is ${eurosFormatter.format(nowAllowance)}!`,
-      );
+    const currentAllowance = dailyAllowance - dayTotalWithdrawals;
+    if (amount > currentAllowance) {
+      message.withdrawFailureLimit(amount, currentAllowance);
       return 0;
     }
 
@@ -39,32 +31,26 @@ function createWallet(name, cash = 0) {
   }
 
   function transferInto(wallet, amount) {
-    console.log(
-      `Transferring ${eurosFormatter.format(
-        amount,
-      )} from ${name} to ${wallet.getName()}`,
-    );
     const withdrawnAmount = withdraw(amount);
-    wallet.deposit(withdrawnAmount);
+    if (withdrawnAmount) {
+      message.transfer(amount, name, wallet.getName());
+      wallet.deposit(withdrawnAmount);
+    }
   }
 
   function setDailyAllowance(newAllowance) {
     dailyAllowance = newAllowance;
-    const remaining = dailyAllowance - dayTotalWithdrawals;
-    console.log(
-      `Daily allowance set to: ${eurosFormatter.format(
-        newAllowance,
-      )}. Remaining: ${eurosFormatter.format(remaining)}`,
-    );
+    const currentAllowance = dailyAllowance - dayTotalWithdrawals;
+    message.setDailyAllowance(dailyAllowance, currentAllowance);
   }
 
   function resetDailyAllowance() {
     dayTotalWithdrawals = 0;
-    console.log(`Limit is renewed: ${eurosFormatter.format(dailyAllowance)}`);
+    message.resetLimit(dailyAllowance);
   }
 
   function reportBalance() {
-    console.log(`Name: ${name}, balance: ${eurosFormatter.format(cash)}`);
+    message.reportBalance(name, cash);
   }
 
   const getName = () => name;
