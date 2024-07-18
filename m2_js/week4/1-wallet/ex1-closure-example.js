@@ -1,4 +1,4 @@
-import eurosFormatter from "./euroFormatter.js";
+import eurosFormatter from './euroFormatter.js';
 
 /**
  * This is the closure way of doing things and we have already completed it for you so you don't need to do anything.
@@ -6,7 +6,7 @@ import eurosFormatter from "./euroFormatter.js";
  */
 
 function createWallet(name, cash = 0) {
-  let dailyAllowance = 40;
+  let dailyAllowance = 50;
   let dayTotalWithdrawals = 0;
 
   function deposit(amount) {
@@ -15,12 +15,18 @@ function createWallet(name, cash = 0) {
 
   function withdraw(amount) {
     if (cash - amount < 0) {
-      console.log(`Insufficient funds!`);
+      console.log(`FAILED to withdraw ${eurosFormatter.format(amount)}.
+       You only HAVE ${eurosFormatter.format(cash)}.`);
       return 0;
     }
 
-    if (dayTotalWithdrawals + amount > dailyAllowance) {
-      console.log(`Insufficient remaining daily allowance!`);
+    const nowAllowance = dailyAllowance - dayTotalWithdrawals;
+    if (amount > nowAllowance) {
+      console.log(
+        `FAILED to withdraw ${eurosFormatter.format(
+          amount,
+        )}. Your LIMIT ${eurosFormatter.format(nowAllowance)}!`,
+      );
       return 0;
     }
 
@@ -32,8 +38,8 @@ function createWallet(name, cash = 0) {
   function transferInto(wallet, amount) {
     console.log(
       `Transferring ${eurosFormatter.format(
-        amount
-      )} from ${name} to ${wallet.getName()}`
+        amount,
+      )} from ${name} to ${wallet.getName()}`,
     );
     const withdrawnAmount = withdraw(amount);
     wallet.deposit(withdrawnAmount);
@@ -42,12 +48,13 @@ function createWallet(name, cash = 0) {
   function setDailyAllowance(newAllowance) {
     dailyAllowance = newAllowance;
     console.log(
-      `Daily allowance set to: ${eurosFormatter.format(newAllowance)}`
+      `Daily allowance set to: ${eurosFormatter.format(newAllowance)}`,
     );
   }
 
   function resetDailyAllowance() {
     dayTotalWithdrawals = 0;
+    console.log(`Limit is renewed: ${eurosFormatter.format(dailyAllowance)}`);
   }
 
   function reportBalance() {
@@ -68,14 +75,11 @@ function createWallet(name, cash = 0) {
 }
 
 function main() {
-  const walletJack = createWallet("Jack", 100);
-  const walletJoe = createWallet("Joe", 10);
-  const walletJane = createWallet("Jane", 20);
+  const walletJack = createWallet('Jack', 100);
+  const walletJoe = createWallet('Joe', 10);
+  const walletJane = createWallet('Jane', 20);
 
   walletJack.transferInto(walletJoe, 50);
-  walletJack.setDailyAllowance(80);
-  walletJack.transferInto(walletJoe, 50);
-
   walletJane.transferInto(walletJoe, 25);
 
   walletJane.deposit(20);
@@ -84,6 +88,15 @@ function main() {
   walletJack.reportBalance();
   walletJoe.reportBalance();
   walletJane.reportBalance();
+
+  console.log('\n');
+  walletJack.transferInto(walletJoe, 40);
+  walletJack.setDailyAllowance(90);
+  walletJack.transferInto(walletJoe, 40);
+  console.log('\n');
+  walletJack.transferInto(walletJoe, 10);
+  walletJack.resetDailyAllowance();
+  walletJack.transferInto(walletJoe, 10);
 }
 
 main();
