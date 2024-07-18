@@ -5,10 +5,6 @@ function Wallet(name, cash) {
   this._cash = cash;
 }
 
-Wallet.prototype.deposit = function (amount) {
-  this._cash += amount;
-};
-
 Wallet.prototype.withdraw = function (amount) {
   if (this._cash - amount < 0) {
     message.withdrawFailureInsufficient(amount, this._cash);
@@ -17,6 +13,10 @@ Wallet.prototype.withdraw = function (amount) {
 
   this._cash -= amount;
   return amount;
+};
+
+Wallet.prototype.deposit = function (amount) {
+  this._cash += amount;
 };
 
 Wallet.prototype.transferInto = function (wallet, amount) {

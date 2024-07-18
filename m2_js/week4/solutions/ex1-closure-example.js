@@ -8,9 +8,18 @@ import { message } from './utils/messages.js';
 function createWallet(name, cash = 0) {
   let dailyAllowance = 50;
   let dayTotalWithdrawals = 0;
+  function currentAllowance() {
+    return dailyAllowance - dayTotalWithdrawals;
+  }
 
-  function deposit(amount) {
-    cash += amount;
+  function setDailyAllowance(newAllowance) {
+    dailyAllowance = newAllowance;
+    message.setDailyAllowance(dailyAllowance, currentAllowance());
+  }
+
+  function resetDailyAllowance() {
+    dayTotalWithdrawals = 0;
+    message.resetLimit(dailyAllowance);
   }
 
   function withdraw(amount) {
@@ -18,16 +27,18 @@ function createWallet(name, cash = 0) {
       message.withdrawFailureInsufficient(amount, cash);
       return 0;
     }
-
-    const currentAllowance = dailyAllowance - dayTotalWithdrawals;
-    if (amount > currentAllowance) {
-      message.withdrawFailureLimit(amount, currentAllowance);
+    if (amount > currentAllowance()) {
+      message.withdrawFailureLimit(amount, currentAllowance());
       return 0;
     }
 
     cash -= amount;
     dayTotalWithdrawals += amount;
     return amount;
+  }
+
+  function deposit(amount) {
+    cash += amount;
   }
 
   function transferInto(wallet, amount) {
@@ -38,17 +49,6 @@ function createWallet(name, cash = 0) {
     }
   }
 
-  function setDailyAllowance(newAllowance) {
-    dailyAllowance = newAllowance;
-    const currentAllowance = dailyAllowance - dayTotalWithdrawals;
-    message.setDailyAllowance(dailyAllowance, currentAllowance);
-  }
-
-  function resetDailyAllowance() {
-    dayTotalWithdrawals = 0;
-    message.resetLimit(dailyAllowance);
-  }
-
   function reportBalance() {
     message.reportBalance(name, cash);
   }
@@ -56,11 +56,11 @@ function createWallet(name, cash = 0) {
   const getName = () => name;
 
   return {
-    deposit,
-    withdraw,
-    transferInto,
     setDailyAllowance,
     resetDailyAllowance,
+    withdraw,
+    deposit,
+    transferInto,
     reportBalance,
     getName,
   };

@@ -1,9 +1,5 @@
 import { message } from './utils/messages.js';
 
-function deposit(amount) {
-  this._cash += amount;
-}
-
 function withdraw(amount) {
   if (this._cash - amount < 0) {
     message.withdrawFailureInsufficient(amount, this._cash);
@@ -12,6 +8,10 @@ function withdraw(amount) {
 
   this._cash -= amount;
   return amount;
+}
+
+function deposit(amount) {
+  this._cash += amount;
 }
 
 function transferInto(wallet, amount) {

@@ -9,14 +9,6 @@ class Wallet {
     this.#cash = cash;
   }
 
-  get name() {
-    return this.#name;
-  }
-
-  deposit(amount) {
-    this.#cash += amount;
-  }
-
   withdraw(amount) {
     if (this.#cash - amount < 0) {
       message.withdrawFailureInsufficient(amount, this.#cash);
@@ -25,6 +17,10 @@ class Wallet {
 
     this.#cash -= amount;
     return amount;
+  }
+
+  deposit(amount) {
+    this.#cash += amount;
   }
 
   transferInto(wallet, amount) {
@@ -37,6 +33,10 @@ class Wallet {
 
   reportBalance() {
     message.reportBalance(this.#name, this.#cash);
+  }
+
+  get name() {
+    return this.#name;
   }
 }
 

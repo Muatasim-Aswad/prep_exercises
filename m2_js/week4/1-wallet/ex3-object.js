@@ -5,10 +5,6 @@ function createWallet(name, cash = 0) {
     _name: name,
     _cash: cash,
 
-    deposit: function (amount) {
-      this._cash += amount;
-    },
-
     withdraw: function (amount) {
       if (this._cash - amount < 0) {
         message.withdrawFailureInsufficient(amount, this._cash);
@@ -17,6 +13,10 @@ function createWallet(name, cash = 0) {
 
       this._cash -= amount;
       return amount;
+    },
+
+    deposit: function (amount) {
+      this._cash += amount;
     },
 
     transferInto: function (wallet, amount) {
