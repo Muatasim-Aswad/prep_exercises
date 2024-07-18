@@ -15,8 +15,11 @@ function createWallet(name, cash = 0) {
 
   function withdraw(amount) {
     if (cash - amount < 0) {
-      console.log(`FAILED to withdraw ${eurosFormatter.format(amount)}.
-       You only HAVE ${eurosFormatter.format(cash)}.`);
+      console.log(
+        `FAILED to withdraw ${eurosFormatter.format(
+          amount,
+        )}. You only HAVE ${eurosFormatter.format(cash)}.`,
+      );
       return 0;
     }
 
@@ -25,7 +28,7 @@ function createWallet(name, cash = 0) {
       console.log(
         `FAILED to withdraw ${eurosFormatter.format(
           amount,
-        )}. Your LIMIT ${eurosFormatter.format(nowAllowance)}!`,
+        )}. Your DAILY LIMIT is ${eurosFormatter.format(nowAllowance)}!`,
       );
       return 0;
     }
@@ -47,8 +50,11 @@ function createWallet(name, cash = 0) {
 
   function setDailyAllowance(newAllowance) {
     dailyAllowance = newAllowance;
+    const remaining = dailyAllowance - dayTotalWithdrawals;
     console.log(
-      `Daily allowance set to: ${eurosFormatter.format(newAllowance)}`,
+      `Daily allowance set to: ${eurosFormatter.format(
+        newAllowance,
+      )}. Remaining: ${eurosFormatter.format(remaining)}`,
     );
   }
 
@@ -79,20 +85,24 @@ function main() {
   const walletJoe = createWallet('Joe', 10);
   const walletJane = createWallet('Jane', 20);
 
+  //test main functions
   walletJack.transferInto(walletJoe, 50);
   walletJane.transferInto(walletJoe, 25);
-
   walletJane.deposit(20);
   walletJane.transferInto(walletJoe, 25);
-
   walletJack.reportBalance();
   walletJoe.reportBalance();
   walletJane.reportBalance();
 
+  //test daily allowance
   console.log('\n');
   walletJack.transferInto(walletJoe, 40);
+
+  //test set daily allowance
   walletJack.setDailyAllowance(90);
   walletJack.transferInto(walletJoe, 40);
+
+  //test reset daily allowance
   console.log('\n');
   walletJack.transferInto(walletJoe, 10);
   walletJack.resetDailyAllowance();
