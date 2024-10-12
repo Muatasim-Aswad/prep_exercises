@@ -1,2 +1,0 @@
-- [First Exercise](./traffic-light-1.js)
-- [Second Exercise](./traffic-light-2.js)
